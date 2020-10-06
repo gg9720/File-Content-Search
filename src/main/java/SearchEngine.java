@@ -1,5 +1,4 @@
 import org.apache.commons.io.FilenameUtils;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -16,7 +15,9 @@ public class SearchEngine implements ISearch {
     private static final String arch1 = "jar";
 
 
-    /**
+    /** Method which accepts path to folder and traverses the whole directory
+     * tree with all subdirectories.
+     *
      * @param folder an absolute path to folder which we will traverse
      * @return list with all files in the @param
      */
@@ -38,11 +39,15 @@ public class SearchEngine implements ISearch {
 
     }
 
-
+    /** Method that returns list which includes Path to files. These files
+     * we will process to search about the word.
+     *
+     * @param rootFolder a path to the given folder from user
+     * @return Returns list with Path to all files plus unzipped archives
+     */
     public List<Path> getAllFiles(String rootFolder) {
         List<Path> paths = walkThroughDirTree(rootFolder);
         try {
-
 
             for (int i = 0; i < paths.size(); i++) {
 
@@ -54,18 +59,10 @@ public class SearchEngine implements ISearch {
                     continue;
                 }
                 if (ext1.equals(arch1)) {
-                    try {
-                        decompressJARArchive(paths.get(i).toString(), rootFolder);
-                    } catch (Exception e) {
-                        System.out.println("Exception thrown: " + e);
-                    }
+                    decompressJARArchive(paths.get(i).toString(), rootFolder);
                 }
                 if (ext1.equals(arch)) {
-                    try {
-                        decompressArchive(paths.get(i).toString(), rootFolder);
-                    } catch (Exception e) {
-                        System.out.println("Exception thrown: " + e);
-                    }
+                    decompressArchive(paths.get(i).toString(), rootFolder);
                 }
             }
         }catch(NullPointerException ex){
@@ -76,22 +73,33 @@ public class SearchEngine implements ISearch {
         return paths;
     }
 
+    /**
+     *
+     * @param folder given String which needs to be the Path to the folder
+     * @return if there is a Path to the folder or not
+     */
     @Override
     public boolean doesThePathExist(String folder) {
         File temp = new File(folder);
         return temp.exists();
     }
 
+    /** The method which by given folder and word is searching inside
+     * files for matches.
+     *
+     * @param rootFolder Path to the folder that the user needs
+     * @param word for this String word we will search in each file
+     *             of the folder
+     * @return returns true if there are any matches and false if
+     * the user selected wrong path to folder or No Matches
+     */
     @Override
-    public void getAllMatches(String rootFolder, String word) {
+    public boolean getAllMatches(String rootFolder, String word) {
         List<Path> paths = getAllFiles(rootFolder);
         if(paths==null){
-            return;
+            return false;
         }
         TreeSet<Match> results = new TreeSet<>();
-        if (paths == null) {
-            return;
-        }
         for (int i = 0; i < paths.size(); i++) {
             File temp = new File(paths.get(i).toString());
             if (temp.isDirectory()) {
@@ -116,16 +124,25 @@ public class SearchEngine implements ISearch {
         }
         if (results.isEmpty()) {
             System.out.println("No matches");
+            return false;
         }
         for (Match e : results) {
             System.out.println(e);
         }
+        return true;
 
     }
 
+    /** Unzipping the ZIP file format archive. Reads the archive file
+     * by file as ZipEntries and writing the information into new files
+     * in the destination folder
+     *
+     * @param pathName Path to the archive file
+     * @param destName Path to the folder in which we want to unzip the archive
+     */
     @Override
-    public void decompressArchive(String fileName, String destName) {
-        fileName = fileName.replace("\\", "/");
+    public void decompressArchive(String pathName, String destName) {
+        pathName = pathName.replace("\\", "/");
 
         destName = destName.replace("\\", "/");
 
@@ -135,7 +152,7 @@ public class SearchEngine implements ISearch {
         byte[] buffer = new byte[1024];
         try {
 
-            ZipInputStream zis = new ZipInputStream(new FileInputStream(fileName));
+            ZipInputStream zis = new ZipInputStream(new FileInputStream(pathName));
             ZipEntry zipEntry = zis.getNextEntry();
 
             while (zipEntry != null) {
@@ -165,6 +182,11 @@ public class SearchEngine implements ISearch {
 
     }
 
+    /** The same logic as the method above
+     *
+     * @param pathName Path to the archive file
+     * @param destName Path to the folder in which we want to unzip the archive
+     */
     @Override
     public void decompressJARArchive(String pathName, String destName) {
         try {

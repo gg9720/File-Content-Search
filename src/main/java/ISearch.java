@@ -8,7 +8,7 @@ public interface ISearch {
 
     boolean doesThePathExist(String folder);
 
-    void getAllMatches(String rootFolder, String word);
+    boolean getAllMatches(String rootFolder, String word);
 
     void decompressArchive(String pathName, String destName);
 

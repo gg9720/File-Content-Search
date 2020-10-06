@@ -1,9 +1,7 @@
-import java.nio.file.Path;
-import java.util.List;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         System.out.println("Please enter path and word to search in files");
         Scanner sc = new Scanner(System.in);
         String filepath = sc.next();
@@ -11,8 +9,6 @@ public class Main {
         SearchEngine temp = new SearchEngine();
 
         filepath = filepath.replace("\\", "/");
-
-        List<Path> list = temp.getAllFiles(filepath);
 
         temp.getAllMatches(filepath,word);
     }
