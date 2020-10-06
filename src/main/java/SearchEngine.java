@@ -123,6 +123,7 @@ public class SearchEngine implements ISearch {
             System.out.println("No matches");
             return false;
         }
+        System.out.println("Files containing the given word: ");
         for (Match e : results) {
             System.out.println(e);
         }
