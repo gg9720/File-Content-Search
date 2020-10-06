@@ -52,8 +52,6 @@ public class SearchEngine implements ISearch {
             for (int i = 0; i < paths.size(); i++) {
 
                 String ext1 = FilenameUtils.getExtension(paths.get(i).toString());
-//            System.out.println(ext1);
-//            System.out.println("===================");
                 File temp = new File(paths.get(i).toString());
                 if (temp.isDirectory()) {
                     continue;
@@ -107,17 +105,16 @@ public class SearchEngine implements ISearch {
             }
             try {
                 FileInputStream fis = new FileInputStream(paths.get(i).toString());
-                Scanner sc = new Scanner(fis);    //file to be scanned
-                //returns true if there is another line to read
+                Scanner sc = new Scanner(fis);
+
                 while (sc.hasNextLine()) {
                     String x = sc.nextLine();
                     if (x.contains(word)) {
-                        //System.out.println(" Path " + paths.get(i) + "  contains the word");
                         Match tempp = new Match(Files.size(paths.get(i)), paths.get(i).toString());
                         results.add(tempp);
                     }
                 }
-                sc.close();     //closes the scanner
+                sc.close();
             } catch (IOException e) {
                 System.out.println("Exception thrown: " + e);
             }
@@ -157,7 +154,6 @@ public class SearchEngine implements ISearch {
 
             while (zipEntry != null) {
                 String filePath = destDirectoryFolder + File.separator + zipEntry.getName();
-                //System.out.println("Unzipping " + filePath);
                 if (!zipEntry.isDirectory()) {
                     FileOutputStream fos = new FileOutputStream(filePath);
                     int len;
