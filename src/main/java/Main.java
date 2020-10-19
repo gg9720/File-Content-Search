@@ -10,6 +10,7 @@ public class Main {
 
         filepath = filepath.replace("\\", "/");
 
-        temp.getAllMatches(filepath,word);
+       temp.getAllMatches(filepath,word);
+        // temp.getAllFiles(filepath);
     }
 }
